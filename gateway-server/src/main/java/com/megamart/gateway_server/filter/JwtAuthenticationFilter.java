@@ -25,9 +25,7 @@ public class JwtAuthenticationFilter extends AbstractGatewayFilterFactory<JwtAut
         return (exchange, chain) -> {
             String path = exchange.getRequest().getURI().getPath();
             
-            if (path.equals("/auth/register") || path.equals("/auth/login")) {
-                return chain.filter(exchange);
-            }
+
 
             String authHeader = exchange.getRequest().getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
             

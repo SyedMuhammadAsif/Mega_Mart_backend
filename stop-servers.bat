@@ -14,6 +14,7 @@ echo.
 echo Closing all server windows...
 taskkill /f /fi "WindowTitle eq Discovery-Server*" 2>nul
 taskkill /f /fi "WindowTitle eq Config-Server*" 2>nul
+taskkill /f /fi "WindowTitle eq Auth-Server*" 2>nul
 taskkill /f /fi "WindowTitle eq Gateway-Server*" 2>nul
 
 echo.
