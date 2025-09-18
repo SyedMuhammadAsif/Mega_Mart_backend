@@ -1,14 +1,23 @@
 package com.megamart.auth_server.controller;
 
-import com.megamart.auth_server.dto.*;
-import com.megamart.auth_server.entity.User;
-import com.megamart.auth_server.repository.UserRepository;
-import com.megamart.auth_server.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.megamart.auth_server.dto.AuthResponse;
+import com.megamart.auth_server.dto.LoginRequest;
+import com.megamart.auth_server.dto.RegisterRequest;
+import com.megamart.auth_server.dto.RegisterResponse;
+import com.megamart.auth_server.entity.User;
+import com.megamart.auth_server.repository.UserRepository;
+import com.megamart.auth_server.util.JwtUtil;
 
 @RestController
 @RequestMapping("/auth")
@@ -25,7 +34,7 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             return ResponseEntity.badRequest().body("Email already exists");
         }
@@ -37,8 +46,9 @@ public class AuthController {
                 request.getRole()
         );
 
-        userRepository.save(user);
-        return ResponseEntity.ok("User registered successfully");
+        User savedUser = userRepository.save(user);
+        RegisterResponse response = new RegisterResponse(savedUser, "User registered successfully");
+        return ResponseEntity.status(201).body(response);
     }
 
     @PostMapping("/login")

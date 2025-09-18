@@ -15,8 +15,8 @@ public class SecurityConfig {
         return http
                 .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(exchanges -> exchanges
-                        .pathMatchers("/auth/register", "/auth/login").permitAll()
-                        .anyExchange().authenticated()
+                        .pathMatchers("/auth/register", "/auth/login", "/auth/validate").permitAll()
+                        .anyExchange().permitAll() // Let gateway routes handle auth via filters
                 )
                 .httpBasic(httpBasic -> httpBasic.disable())
                 .formLogin(formLogin -> formLogin.disable())
