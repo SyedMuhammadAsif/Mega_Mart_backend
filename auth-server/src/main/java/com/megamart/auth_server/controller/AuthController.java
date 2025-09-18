@@ -15,6 +15,7 @@ import com.megamart.auth_server.dto.AuthResponse;
 import com.megamart.auth_server.dto.LoginRequest;
 import com.megamart.auth_server.dto.RegisterRequest;
 import com.megamart.auth_server.dto.RegisterResponse;
+import com.megamart.auth_server.dto.ValidationResponse;
 import com.megamart.auth_server.entity.User;
 import com.megamart.auth_server.repository.UserRepository;
 import com.megamart.auth_server.util.JwtUtil;
@@ -66,9 +67,9 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/validate", method = RequestMethod.GET)
-    public ResponseEntity<String> validateToken(@RequestHeader(value = "Authorization", required = false) String token) {
+    public ResponseEntity<ValidationResponse> validateToken(@RequestHeader(value = "Authorization", required = false) String token) {
         if (token == null || token.isEmpty()) {
-            return ResponseEntity.badRequest().body("Authorization header missing");
+            return ResponseEntity.badRequest().body(new ValidationResponse(false, "Authorization header missing"));
         }
         
         if (token.startsWith("Bearer ")) {
@@ -77,12 +78,14 @@ public class AuthController {
         
         try {
             if (jwtUtil.validateToken(token)) {
-                return ResponseEntity.ok("Token is valid");
+                String email = jwtUtil.getEmailFromToken(token);
+                String role = jwtUtil.getRoleFromToken(token);
+                return ResponseEntity.ok(new ValidationResponse(true, "Token is valid", email, role));
             }
-            return ResponseEntity.badRequest().body("Invalid token");
+            return ResponseEntity.badRequest().body(new ValidationResponse(false, "Invalid token"));
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("Token validation error: " + e.getMessage());
+            return ResponseEntity.badRequest().body(new ValidationResponse(false, "Token validation error: " + e.getMessage()));
         }
     }
 }
