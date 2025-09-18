@@ -20,7 +20,7 @@ import com.megamart.auth_server.repository.UserRepository;
 import com.megamart.auth_server.util.JwtUtil;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/auth")
 @CrossOrigin(origins = "*")
 public class AuthController {
 

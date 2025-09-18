@@ -18,14 +18,14 @@ public class GatewayConfig {
     public RouteLocator customRouteLocator(RouteLocatorBuilder builder) {
         return builder.routes()
                 .route("auth-public", r -> r
-                        .path("/auth/register", "/auth/login", "/auth/validate")
+                        .path("/api/auth/register", "/api/auth/login", "/api/auth/validate")
                         .uri("lb://auth-server"))
                 .route("auth-swagger", r -> r
                         .path("/auth-docs/**")
                         .filters(f -> f.rewritePath("/auth-docs/(?<segment>.*)", "/${segment}"))
                         .uri("lb://auth-server"))
                 .route("auth-protected", r -> r
-                        .path("/auth/**")
+                        .path("/api/auth/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://auth-server"))
                 .build();
