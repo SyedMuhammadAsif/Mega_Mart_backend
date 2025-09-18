@@ -3,10 +3,12 @@ package com.megamart.auth_server.dto;
 public class AuthResponse {
     private String token;
     private String message;
+    private Long userId;
 
-    public AuthResponse(String token, String message) {
+    public AuthResponse(String token, String message, Long userId) {
         this.token = token;
         this.message = message;
+        this.userId = userId;
     }
 
     public String getToken() { return token; }
@@ -14,4 +16,7 @@ public class AuthResponse {
     
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
+    
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 }

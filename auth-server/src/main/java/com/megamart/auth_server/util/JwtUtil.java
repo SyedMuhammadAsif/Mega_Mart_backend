@@ -24,10 +24,10 @@ public class JwtUtil {
     }
     private final long expiration = 86400000; // 24 hours
 
-    public String generateToken(String phoneNumber, String role) {
+    public String generateToken(String email, String role) {
         try {
             return Jwts.builder()
-                    .setSubject(phoneNumber)
+                    .setSubject(email)
                     .claim("role", role)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + expiration))
@@ -50,7 +50,7 @@ public class JwtUtil {
         }
     }
 
-    public String getPhoneNumberFromToken(String token) {
+    public String getEmailFromToken(String token) {
         return Jwts.parser()
                 .verifyWith(getKey())
                 .build()

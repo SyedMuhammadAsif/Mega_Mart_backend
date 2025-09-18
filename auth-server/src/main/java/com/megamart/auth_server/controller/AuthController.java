@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin(origins = "*")
 public class AuthController {
 
     @Autowired
@@ -25,17 +26,13 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody RegisterRequest request) {
-        if (userRepository.existsByPhoneNumber(request.getPhoneNumber())) {
-            return ResponseEntity.badRequest().body("Phone number already exists");
-        }
-
-        if (userRepository.existsByName(request.getName())) {
-            return ResponseEntity.badRequest().body("Name already exists");
+        if (userRepository.existsByEmail(request.getEmail())) {
+            return ResponseEntity.badRequest().body("Email already exists");
         }
 
         User user = new User(
                 request.getName(),
-                request.getPhoneNumber(),
+                request.getEmail(),
                 passwordEncoder.encode(request.getPassword()),
                 request.getRole()
         );
@@ -46,16 +43,16 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        User user = userRepository.findByPhoneNumber(request.getPhoneNumber())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElse(null);
 
         if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             return ResponseEntity.badRequest()
-                    .body(new AuthResponse(null, "Invalid credentials"));
+                    .body(new AuthResponse(null, "Invalid credentials", null));
         }
 
-        String token = jwtUtil.generateToken(user.getPhoneNumber(), user.getRole());
-        return ResponseEntity.ok(new AuthResponse(token, "Login successful"));
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().toString());
+        return ResponseEntity.ok(new AuthResponse(token, "Login successful", user.getId()));
     }
 
     @RequestMapping(value = "/validate", method = RequestMethod.GET)
