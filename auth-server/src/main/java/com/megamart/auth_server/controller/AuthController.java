@@ -2,13 +2,12 @@ package com.megamart.auth_server.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.megamart.auth_server.dto.AuthResponse;
@@ -16,9 +15,7 @@ import com.megamart.auth_server.dto.LoginRequest;
 import com.megamart.auth_server.dto.RegisterRequest;
 import com.megamart.auth_server.dto.RegisterResponse;
 import com.megamart.auth_server.dto.ValidationResponse;
-import com.megamart.auth_server.entity.User;
-import com.megamart.auth_server.repository.UserRepository;
-import com.megamart.auth_server.util.JwtUtil;
+import com.megamart.auth_server.service.AuthService;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -26,66 +23,23 @@ import com.megamart.auth_server.util.JwtUtil;
 public class AuthController {
 
     @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtil jwtUtil;
+    private AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
-            return ResponseEntity.badRequest().body("Email already exists");
-        }
-
-        User user = new User(
-                request.getName(),
-                request.getEmail(),
-                passwordEncoder.encode(request.getPassword()),
-                request.getRole()
-        );
-
-        User savedUser = userRepository.save(user);
-        RegisterResponse response = new RegisterResponse(savedUser, "User registered successfully");
+    public ResponseEntity<RegisterResponse> register(@RequestBody RegisterRequest request) {
+        RegisterResponse response = authService.register(request);
         return ResponseEntity.status(201).body(response);
     }
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElse(null);
-
-        if (user == null || !passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            return ResponseEntity.badRequest()
-                    .body(new AuthResponse(null, "Invalid credentials", null));
-        }
-
-        String token = jwtUtil.generateToken(user.getEmail(), user.getRole().toString());
-        return ResponseEntity.ok(new AuthResponse(token, "Login successful", user.getId()));
+        AuthResponse response = authService.login(request);
+        return ResponseEntity.ok(response);
     }
 
-    @RequestMapping(value = "/validate", method = RequestMethod.GET)
+    @GetMapping("/validate")
     public ResponseEntity<ValidationResponse> validateToken(@RequestHeader(value = "Authorization", required = false) String token) {
-        if (token == null || token.isEmpty()) {
-            return ResponseEntity.badRequest().body(new ValidationResponse(false, "Authorization header missing"));
-        }
-        
-        if (token.startsWith("Bearer ")) {
-            token = token.substring(7);
-        }
-        
-        try {
-            if (jwtUtil.validateToken(token)) {
-                String email = jwtUtil.getEmailFromToken(token);
-                String role = jwtUtil.getRoleFromToken(token);
-                return ResponseEntity.ok(new ValidationResponse(true, "Token is valid", email, role));
-            }
-            return ResponseEntity.badRequest().body(new ValidationResponse(false, "Invalid token"));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().body(new ValidationResponse(false, "Token validation error: " + e.getMessage()));
-        }
+        ValidationResponse response = authService.validateToken(token);
+        return ResponseEntity.ok(response);
     }
 }
