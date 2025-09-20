@@ -27,6 +27,21 @@ public class AuthService {
     private JwtUtil jwtUtil;
 
     public RegisterResponse register(RegisterRequest request) {
+        if (request == null) {
+            throw new AuthException("Request body is required");
+        }
+        if (request.getName() == null || request.getName().trim().isEmpty()) {
+            throw new AuthException("Name is required");
+        }
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new AuthException("Email is required");
+        }
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new AuthException("Password is required");
+        }
+        if (request.getRole() == null) {
+            throw new AuthException("Role is required");
+        }
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new UserAlreadyExistsException("Email already exists");
         }
@@ -43,6 +58,15 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
+        if (request == null) {
+            throw new AuthException("Request body is required");
+        }
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new AuthException("Email is required");
+        }
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new AuthException("Password is required");
+        }
         User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new AuthException("Invalid credentials"));
 
@@ -55,8 +79,8 @@ public class AuthService {
     }
 
     public ValidationResponse validateToken(String token) {
-        if (token == null || token.isEmpty()) {
-            throw new AuthException("Authorization header missing");
+        if (token == null || token.trim().isEmpty()) {
+            throw new AuthException("Authorization header is required");
         }
 
         if (token.startsWith("Bearer ")) {
