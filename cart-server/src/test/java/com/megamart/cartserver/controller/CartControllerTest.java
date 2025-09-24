@@ -35,18 +35,17 @@ public class CartControllerTest {
     @MockBean
     private CartService cartService;
 
-    private Long userId; // Changed to Long
+    private String userId;
     private CartDtos.AddItemRequest addItemRequest;
     private CartDtos.CartResponse cartResponse;
 
     @BeforeEach
     void setUp() {
-        userId = 1L; // Now correctly assigned to a Long userId
-        // Removed unitPrice from AddItemRequest constructor
+        userId = "1";
         addItemRequest = new CartDtos.AddItemRequest(123L, 1);
         cartResponse = CartDtos.CartResponse.builder()
                 .id(1L)
-                .userId(userId) // Now correctly assigned to a Long userId
+                .userId(userId)
                 .total(BigDecimal.valueOf(1200.00))
                 .totalItems(1)
                 .totalPrice(BigDecimal.valueOf(1200.00))

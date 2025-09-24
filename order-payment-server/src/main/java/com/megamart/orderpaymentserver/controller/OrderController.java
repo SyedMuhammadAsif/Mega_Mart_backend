@@ -131,7 +131,7 @@ public class OrderController {
     @GetMapping("/{id}/tracking")
     public ResponseEntity<Map<String, Object>> getOrderTracking(@PathVariable Long id) {
         log.info("Fetching tracking for order: {}", id);
-        List<com.megamart.order_payment_service.entity.OrderTracking> trackingHistory = 
+        List<com.megamart.orderpaymentserver.entity.OrderTracking> trackingHistory = 
             orderService.getOrderTrackingHistory(id);
         
         Map<String, Object> tracking = new HashMap<>();

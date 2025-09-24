@@ -1,9 +1,6 @@
 package com.megamart.productserver.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,9 +8,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "product_images")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProductImage {
     
     @Id
@@ -37,4 +31,28 @@ public class ProductImage {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public ProductImage() {}
+
+    public ProductImage(Long id, String imageUrl, Boolean isPrimary, Product product, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.imageUrl = imageUrl;
+        this.isPrimary = isPrimary;
+        this.product = product;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+    public Boolean getIsPrimary() { return isPrimary; }
+    public void setIsPrimary(Boolean isPrimary) { this.isPrimary = isPrimary; }
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

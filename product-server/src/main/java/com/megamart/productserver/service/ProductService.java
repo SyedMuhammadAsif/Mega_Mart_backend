@@ -14,6 +14,7 @@ import com.megamart.productserver.repository.CategoryRepository;
 import com.megamart.productserver.repository.ProductRepository;
 import com.megamart.productserver.service.interfaces.ProductServiceInterface;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -27,11 +28,15 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class ProductService implements ProductServiceInterface {
     
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    
+    public ProductService(ProductRepository productRepository, CategoryRepository categoryRepository) {
+        this.productRepository = productRepository;
+        this.categoryRepository = categoryRepository;
+    }
     
     public Page<ProductDTO> getAllProducts(int page, int size, String sortBy, String sortDirection) {
         Sort sort = sortDirection.equalsIgnoreCase("desc") ? 
@@ -109,15 +114,11 @@ public class ProductService implements ProductServiceInterface {
     
     @Transactional
     public ProductDTO updateStock(Long id, Integer stockChange) {
-        System.out.println("ProductService.updateStock called for product " + id + " with stockChange: " + stockChange);
-        
         Product product = productRepository.findById(id)
             .orElseThrow(() -> new ProductNotFoundException("Product not found with id: " + id));
         
         int oldStock = product.getStock();
         int newStock = oldStock + stockChange;
-        
-        System.out.println("Product " + id + " stock: " + oldStock + " -> " + newStock);
         
         if (newStock < 0) {
             throw new IllegalArgumentException("Stock cannot be negative. Current: " + oldStock + ", Change: " + stockChange);
@@ -125,8 +126,6 @@ public class ProductService implements ProductServiceInterface {
         
         product.setStock(newStock);
         Product updatedProduct = productRepository.save(product);
-        
-        System.out.println("Stock updated successfully for product " + id + ". New stock: " + updatedProduct.getStock());
         
         return convertToDTO(updatedProduct);
     }

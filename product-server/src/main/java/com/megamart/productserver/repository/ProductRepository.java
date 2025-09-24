@@ -1,6 +1,6 @@
 package com.megamart.productserver.repository;
 
-import com.megamart.productservice.entity.Product;
+import com.megamart.productserver.entity.Product;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

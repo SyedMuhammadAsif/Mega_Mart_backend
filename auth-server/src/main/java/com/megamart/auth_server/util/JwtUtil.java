@@ -15,26 +15,23 @@ public class JwtUtil {
     
     private SecretKey getKey() {
         if (jwtSecret == null || jwtSecret.isEmpty()) {
-            System.out.println("JWT secret is null or empty!");
             throw new IllegalStateException("JWT secret is not configured");
         }
-        System.out.println("Using JWT secret: " + jwtSecret);
-        System.out.println("JWT secret length: " + jwtSecret.length());
         return Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
     private final long expiration = 86400000; // 24 hours
 
-    public String generateToken(String email, String role) {
+    public String generateToken(String userId, String email, String role) {
         try {
             return Jwts.builder()
                     .setSubject(email)
+                    .claim("userId", userId)
                     .claim("role", role)
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + expiration))
                     .signWith(getKey())
                     .compact();
         } catch (Exception e) {
-            e.printStackTrace();
             return null;
         }
     }
@@ -44,8 +41,6 @@ public class JwtUtil {
             Jwts.parser().verifyWith(getKey()).build().parseSignedClaims(token);
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-            System.out.println("JWT validation failed: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
     }
@@ -66,5 +61,14 @@ public class JwtUtil {
                 .parseSignedClaims(token)
                 .getPayload()
                 .get("role", String.class);
+    }
+
+    public String getUserIdFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(getKey())
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("userId", String.class);
     }
 }

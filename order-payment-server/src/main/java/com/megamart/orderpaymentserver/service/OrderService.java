@@ -37,7 +37,7 @@ public class OrderService implements OrderServiceInterface {
     private final OrderRepository orderRepository;
     private final OrderTrackingRepository trackingRepository;
     private final UserDataServiceInterface userDataService;
-    private final com.megamart.order_payment_service.client.UserServiceClient userServiceClient;
+    private final com.megamart.orderpaymentserver.client.UserServiceClient userServiceClient;
     private final MappingService mappingService;
     private final CartServiceClient cartServiceClient;
     private final ProductServiceClient productServiceClient;

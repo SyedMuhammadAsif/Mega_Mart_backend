@@ -1,9 +1,6 @@
 package com.megamart.productserver.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,9 +8,6 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "product_reviews")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class ProductReview {
     
     @Id
@@ -46,4 +40,37 @@ public class ProductReview {
     @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    public ProductReview() {}
+
+    public ProductReview(Long id, Integer rating, String comment, String reviewerName, String reviewerEmail, LocalDateTime reviewDate, Product product, LocalDateTime createdAt, LocalDateTime updatedAt) {
+        this.id = id;
+        this.rating = rating;
+        this.comment = comment;
+        this.reviewerName = reviewerName;
+        this.reviewerEmail = reviewerEmail;
+        this.reviewDate = reviewDate;
+        this.product = product;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public Integer getRating() { return rating; }
+    public void setRating(Integer rating) { this.rating = rating; }
+    public String getComment() { return comment; }
+    public void setComment(String comment) { this.comment = comment; }
+    public String getReviewerName() { return reviewerName; }
+    public void setReviewerName(String reviewerName) { this.reviewerName = reviewerName; }
+    public String getReviewerEmail() { return reviewerEmail; }
+    public void setReviewerEmail(String reviewerEmail) { this.reviewerEmail = reviewerEmail; }
+    public LocalDateTime getReviewDate() { return reviewDate; }
+    public void setReviewDate(LocalDateTime reviewDate) { this.reviewDate = reviewDate; }
+    public Product getProduct() { return product; }
+    public void setProduct(Product product) { this.product = product; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 }

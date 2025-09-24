@@ -1,8 +1,8 @@
 package com.megamart.productserver.service.interfaces;
 
-import com.megamart.productservice.dto.ProductDTO;
-import com.megamart.productservice.dto.ProductSearchRequest;
-import com.megamart.productservice.entity.Category;
+import com.megamart.productserver.dto.ProductDTO;
+import com.megamart.productserver.dto.ProductSearchRequest;
+import com.megamart.productserver.entity.Category;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

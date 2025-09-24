@@ -9,6 +9,7 @@ import com.megamart.cartserver.exception.InsufficientStockException;
 import com.megamart.cartserver.exception.ItemNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -18,6 +19,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CartService {
 
 	private final CartRepository cartRepository;
@@ -76,9 +78,9 @@ public class CartService {
 		}
 		
 		// Update stock in product service (reduce stock)
-		System.out.println("Reducing stock for product " + request.getProductId() + " by " + request.getQuantity());
+		log.debug("Reducing stock for product {} by {}", request.getProductId(), request.getQuantity());
 		boolean stockUpdated = productServiceClient.updateProductStock(request.getProductId(), -request.getQuantity());
-		System.out.println("Stock update result: " + stockUpdated);
+		log.debug("Stock update result: {}", stockUpdated);
 		
 		recalcCartTotal(cart);
 		cartRepository.save(cart);
@@ -113,9 +115,9 @@ public class CartService {
 		item.setLineTotal(unitPrice.multiply(BigDecimal.valueOf(quantity))); // Recalculate line total based on current unitPrice
 		
 		// Update stock in product service
-		System.out.println("Updating stock for product " + item.getProductId() + " by " + stockChange);
+		log.debug("Updating stock for product {} by {}", item.getProductId(), stockChange);
 		boolean stockUpdated = productServiceClient.updateProductStock(item.getProductId(), stockChange);
-		System.out.println("Stock update result: " + stockUpdated);
+		log.debug("Stock update result: {}", stockUpdated);
 		
 		recalcCartTotal(cart);
 		cartRepository.save(cart);
@@ -134,9 +136,9 @@ public class CartService {
 		
 		if (itemToRemove != null) {
 			// Return stock to product service
-			System.out.println("Returning stock for product " + itemToRemove.getProductId() + " quantity: " + itemToRemove.getQuantity());
+			log.debug("Returning stock for product {} quantity: {}", itemToRemove.getProductId(), itemToRemove.getQuantity());
 			boolean stockUpdated = productServiceClient.updateProductStock(itemToRemove.getProductId(), itemToRemove.getQuantity());
-			System.out.println("Stock return result: " + stockUpdated);
+			log.debug("Stock return result: {}", stockUpdated);
 			
 			// Remove item from cart
 			cart.getItems().removeIf(i -> i.getId().equals(itemId));
@@ -153,9 +155,9 @@ public class CartService {
 		
 		// Return stock for all items
 		cart.getItems().forEach(item -> {
-			System.out.println("Clearing cart - returning stock for product " + item.getProductId() + " quantity: " + item.getQuantity());
+			log.debug("Clearing cart - returning stock for product {} quantity: {}", item.getProductId(), item.getQuantity());
 			boolean stockUpdated = productServiceClient.updateProductStock(item.getProductId(), item.getQuantity());
-			System.out.println("Stock return result: " + stockUpdated);
+			log.debug("Stock return result: {}", stockUpdated);
 		});
 		
 		cart.getItems().clear();
@@ -189,9 +191,9 @@ public class CartService {
 	}
 
 	public boolean testStockUpdate(Long productId, Integer stockChange) {
-		System.out.println("Testing stock update for product " + productId + " with change: " + stockChange);
+		log.debug("Testing stock update for product {} with change: {}", productId, stockChange);
 		boolean result = productServiceClient.updateProductStock(productId, stockChange);
-		System.out.println("Test stock update result: " + result);
+		log.debug("Test stock update result: {}", result);
 		return result;
 	}
 } 

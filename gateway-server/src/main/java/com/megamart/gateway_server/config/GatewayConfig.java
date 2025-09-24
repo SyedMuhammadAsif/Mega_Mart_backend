@@ -28,6 +28,40 @@ public class GatewayConfig {
                         .path("/api/auth/**")
                         .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
                         .uri("lb://auth-server"))
+                .route("user-admin-public", r -> r
+                        .path("/api/users/register", "/api/auth/login")
+                        .uri("lb://user-admin-server"))
+                .route("user-admin-swagger", r -> r
+                        .path("/user-admin-docs/**")
+                        .filters(f -> f.rewritePath("/user-admin-docs/(?<segment>.*)", "/${segment}"))
+                        .uri("lb://user-admin-server"))
+                .route("user-admin-protected", r -> r
+                        .path("/api/users/**", "/api/admin/**", "/api/addresses/**", "/api/payment-methods/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://user-admin-server"))
+                .route("product-public", r -> r
+                        .path("/api/products/**", "/api/categories/**")
+                        .uri("lb://product-server"))
+                .route("product-swagger", r -> r
+                        .path("/product-docs/**")
+                        .filters(f -> f.rewritePath("/product-docs/(?<segment>.*)", "/${segment}"))
+                        .uri("lb://product-server"))
+                .route("cart-protected", r -> r
+                        .path("/api/cart/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://cart-server"))
+                .route("cart-swagger", r -> r
+                        .path("/cart-docs/**")
+                        .filters(f -> f.rewritePath("/cart-docs/(?<segment>.*)", "/${segment}"))
+                        .uri("lb://cart-server"))
+                .route("order-payment-protected", r -> r
+                        .path("/api/orders/**", "/api/payments/**", "/api/processing-locations/**")
+                        .filters(f -> f.filter(jwtAuthenticationFilter.apply(new JwtAuthenticationFilter.Config())))
+                        .uri("lb://order-payment-server"))
+                .route("order-payment-swagger", r -> r
+                        .path("/order-payment-docs/**")
+                        .filters(f -> f.rewritePath("/order-payment-docs/(?<segment>.*)", "/${segment}"))
+                        .uri("lb://order-payment-server"))
                 .build();
     }
 }

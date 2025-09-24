@@ -1,6 +1,6 @@
 package com.megamart.productserver.repository;
 
-import com.megamart.productservice.entity.Category;
+import com.megamart.productserver.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

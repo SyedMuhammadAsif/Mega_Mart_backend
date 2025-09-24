@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
     public User registerUser(UserRegistrationDto registrationDto) {
         // Check if passwords match
         if (!registrationDto.getPassword().equals(registrationDto.getConfirmPassword())) {
-            throw new DuplicateResourceException("Passwords do not match");
+            throw new IllegalArgumentException("Passwords do not match");
         }
 
         // Check if username already exists

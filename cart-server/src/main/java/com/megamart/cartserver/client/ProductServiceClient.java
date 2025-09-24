@@ -9,13 +9,13 @@ import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Optional;
 
-@FeignClient(name = "product-service", url = "http://localhost:9096/api")
+@FeignClient(name = "product-server")
 public interface ProductServiceClient {
 
-	@GetMapping("/products/{productId}")
+	@GetMapping("/api/products/{productId}")
 	ProductServiceResponse getProductById(@PathVariable Long productId);
 
-	@PostMapping("/products/{productId}/stock")
+	@PostMapping("/api/products/{productId}/stock")
 	Map<String, Object> updateStock(@PathVariable Long productId, @RequestBody Map<String, Integer> request);
 
 	default Optional<Product> getProduct(Long productId) {

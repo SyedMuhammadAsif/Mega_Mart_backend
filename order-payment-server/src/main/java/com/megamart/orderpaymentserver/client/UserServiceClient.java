@@ -14,7 +14,7 @@ public class UserServiceClient {
     @Autowired
     private RestTemplate restTemplate;
     
-    private static final String USER_SERVICE_URL = "http://localhost:9094/api";
+    private static final String USER_SERVICE_URL = "http://user-admin-server/api";
     
     public Map<String, Object> getUserById(String userId) {
         try {
